@@ -63,6 +63,7 @@ ASP.NET Core API
 - [Roadmap](docs/ROADMAP.md)
 - [Распределение работ](docs/TEAM.md)
 - [Правила работы](CONTRIBUTING.md)
+- [Конфигурация GitHub Project](docs/GITHUB_PROJECT.md)
 
 ## Workflow
 
