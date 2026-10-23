@@ -56,8 +56,8 @@ ASP.NET Core API
 
 ## Управление проектом
 
-- [Техническое задание — Issue #3](../../issues/3)
-- [Исторический backlog — Issue #4](../../issues/4)
+- [План проекта и текущие задачи — Issue #4](../../issues/4)
+- [Идеи для следующих версий — Issue #50](../../issues/50)
 - [Техническое задание](docs/SPECIFICATION.md)
 - [Архитектура](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
