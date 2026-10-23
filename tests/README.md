@@ -1,5 +1,12 @@
-# Tests
+# Проверки backend
 
-Здесь размещаются unit/integration/end-to-end тесты проекта.
+AgentObservatory.Api.Tests запускает API через WebApplicationFactory.
 
-Ключевые задачи: #46 и #54.
+- ApiAvailabilityTests проверяет, что API продолжает отвечать при недоступной БД, а также OpenAPI и формат ошибок.
+- DatabaseAvailabilityTests поднимает отдельный PostgreSQL через Testcontainers и проверяет готовность при запуске, приостановке и возобновлении БД. Адрес подключения сохраняется на протяжении сценария. Требуется Docker.
+
+Все проверки: `dotnet test AgentObservatory.sln`.
+
+Без Docker: `dotnet test AgentObservatory.sln --filter "Category!=Database"`.
+
+Тесты не используют базу из Docker Compose или личные строки подключения. Связанные задачи: #5 и #46. Подробности: [локальный запуск](../docs/LOCAL_DEVELOPMENT.md).
