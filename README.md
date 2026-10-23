@@ -39,25 +39,25 @@ ASP.NET Core API
 
 Телеметрия передаётся асинхронно. Недоступность Agent Observatory не должна останавливать наблюдаемое приложение и не должна менять его основную логику.
 
-## Планируемый стек
+## Статус и стек
 
-- Backend: ASP.NET Core, Entity Framework Core
-- Storage: PostgreSQL
-- Realtime: SignalR / WebSocket
-- Frontend: React, TypeScript
-- Integration SDK: .NET
-- Перспективное направление: OpenTelemetry / OTLP
+Проект находится на этапе проектирования: текущая структура содержит документацию и заготовки каталогов. Перечисленные возможности — цели MVP.
+
+Планируемый стек: C# / .NET 10 LTS, ASP.NET Core Web API, PostgreSQL, EF Core / Npgsql, SignalR; .NET SDK на Channels и BackgroundService. Тесты: xUnit, WebApplicationFactory, Testcontainers. Запуск: Docker Compose; CI: GitHub Actions. Небольшой demo UI: React / TypeScript.
+
+Подробности и причины выбора: [архитектура](docs/ARCHITECTURE.md).
 
 ## Команда
 
-- **@IKSXXX** — Backend / Collector
-- **@flex12312** — Frontend / Visualization
-- **третий участник** — SDK / Telemetry, будет добавлен позже
+**@IKSXXX и @flex12312 — два backend-разработчика.** Делим задачи по функциональности, меняемся направлениями и проверяем код друг друга. SDK и demo UI — часть общей работы.
+
+- [Команда и правила разделения задач](docs/TEAM.md)
+- [Актуальный план реализации с критериями готовности](docs/IMPLEMENTATION_PLAN.md)
 
 ## Управление проектом
 
 - [Техническое задание — Issue #3](../../issues/3)
-- [MVP backlog и прогресс — Issue #4](../../issues/4)
+- [Исторический backlog — Issue #4](../../issues/4)
 - [Техническое задание](docs/SPECIFICATION.md)
 - [Архитектура](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
