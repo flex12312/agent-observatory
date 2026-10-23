@@ -17,4 +17,10 @@
     </PackageReference>
     <ProjectReference Include="../../src/backend/AgentObservatory.Api/AgentObservatory.Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\contracts\AgentObservatory.Contracts\AgentObservatory.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../samples/telemetry/run.json" Link="Fixtures/run.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
