@@ -1,0 +1,43 @@
+name: Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/backend/**'
+      - 'tests/**'
+      - 'AgentObservatory.sln'
+      - 'global.json'
+      - 'docker-compose.yml'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'src/backend/**'
+      - 'tests/**'
+      - 'AgentObservatory.sln'
+      - 'global.json'
+      - 'docker-compose.yml'
+      - '.github/workflows/backend.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+        env:
+          POSTGRES_PASSWORD: local-ci-only
+      - name: Restore
+        run: dotnet restore AgentObservatory.sln
+      - name: Build
+        run: dotnet build AgentObservatory.sln --no-restore --configuration Release
+      - name: Test API and PostgreSQL outage recovery
+        run: dotnet test AgentObservatory.sln --no-build --configuration Release
