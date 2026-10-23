@@ -1,17 +1,3 @@
-# Общие изменения
+# Оба участника — backend-разработчики и совместные владельцы проекта.
+# Автор конкретной задачи выбирается в Issue; второй участник делает review.
 * @IKSXXX @flex12312
-
-# Backend / Collector
-/src/backend/ @IKSXXX
-
-# Frontend / Visualization
-/src/frontend/ @flex12312
-
-# SDK ownership временно совместный до добавления третьего участника
-/src/sdk/ @IKSXXX @flex12312
-
-# Общие области
-/docs/ @IKSXXX @flex12312
-/tests/ @IKSXXX @flex12312
-/samples/ @IKSXXX @flex12312
-/.github/ @IKSXXX @flex12312

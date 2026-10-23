@@ -1,54 +1,16 @@
 # Roadmap
 
-## Stage 0 — Foundation
+Все этапы ниже запланированы. Наличие документа или закрытого duplicate Issue не означает реализацию.
 
-- структура репозитория;
-- документация;
-- backend/frontend skeleton;
-- PostgreSQL;
-- CI;
-- единая модель событий.
+1. **Контракт и основа:** event schema v1, solution, PostgreSQL, миграции, health checks, CI.
+2. **Первый сквозной сценарий:** создать Project и Run, принять HTTP batch, сохранить, прочитать события; интеграционные тесты.
+3. **Надёжный SDK:** bounded queue, batch exporter, retries, flush; проверки с недоступным Collector.
+4. **Доступ и запросы:** Identity, ключи проектов, изоляция данных, пагинация, фильтры, индексы.
+5. **Live и визуализация:** SignalR, reconnect, небольшой UI, граф и timeline.
+6. **Портфолио-релиз:** demo без платной модели, измерения, тесты сбоев, инструкции запуска, запись демонстрации.
 
-## Stage 1 — Telemetry Pipeline
+Подробные задачи, зависимости и критерии: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
-- HTTP ingestion;
-- Run lifecycle;
-- event validation;
-- storage;
-- .NET SDK;
-- асинхронный buffer/exporter.
+## После MVP
 
-## Stage 2 — Realtime Observability
-
-- SignalR;
-- live Run;
-- список событий;
-- основные метрики;
-- ошибки и retries.
-
-## Stage 3 — Visualization
-
-- execution graph;
-- subagents;
-- parallel branches;
-- timeline;
-- details panel;
-- фильтры.
-
-## Stage 4 — MVP Hardening
-
-- demo agent;
-- integration tests;
-- fault handling;
-- документация;
-- demo flow.
-
-## Post-MVP
-
-- OpenTelemetry/OTLP;
-- дополнительные SDK;
-- сравнение Run;
-- regression analysis;
-- автоматизированная диагностика;
-- anomaly detection;
-- CI/CD integration.
+OTLP, дополнительные SDK, сравнение Run, автоматическая диагностика. Брокер, кеш и выделенные сервисы вводятся при измеренной необходимости с отдельным описанием решения.
