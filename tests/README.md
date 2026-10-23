@@ -3,7 +3,7 @@
 AgentObservatory.Api.Tests запускает API через WebApplicationFactory.
 
 - ApiAvailabilityTests проверяет, что API продолжает отвечать при недоступной БД, а также OpenAPI и формат ошибок.
-- DatabaseAvailabilityTests поднимает отдельный PostgreSQL через Testcontainers и проверяет готовность при запуске, отказе и восстановлении БД. Требуется Docker.
+- DatabaseAvailabilityTests поднимает отдельный PostgreSQL через Testcontainers и проверяет готовность при запуске, приостановке и возобновлении БД. Адрес подключения сохраняется на протяжении сценария. Требуется Docker.
 
 Все проверки: `dotnet test AgentObservatory.sln`.
 

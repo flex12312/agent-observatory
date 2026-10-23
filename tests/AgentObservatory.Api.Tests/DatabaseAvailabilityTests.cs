@@ -18,12 +18,19 @@ public sealed class DatabaseAvailabilityTests
 
         await AssertReadinessAsync(client, HttpStatusCode.OK);
 
-        await database.StopAsync();
-        await AssertReadinessAsync(client, HttpStatusCode.ServiceUnavailable);
-        using var liveness = await client.GetAsync("/health/live");
-        Assert.Equal(HttpStatusCode.OK, liveness.StatusCode);
+        // Pause keeps the same endpoint; Docker can remap a random port after stop/start.
+        await database.PauseAsync();
+        try
+        {
+            await AssertReadinessAsync(client, HttpStatusCode.ServiceUnavailable);
+            using var liveness = await client.GetAsync("/health/live");
+            Assert.Equal(HttpStatusCode.OK, liveness.StatusCode);
+        }
+        finally
+        {
+            await database.UnpauseAsync();
+        }
 
-        await database.StartAsync();
         await AssertReadinessAsync(client, HttpStatusCode.OK);
     }
 
