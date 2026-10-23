@@ -1,7 +1,9 @@
 # Backend
 
-Здесь будет ASP.NET Core backend и Collector.
+Здесь планируется ASP.NET Core Web API, Collector, EF Core и PostgreSQL.
 
-Основные задачи: #7, #13, #15, #17, #19, #21, #23, #24, #25.
+Оба участника работают над проектом; автора выбираем на конкретную задачу, второй участник делает review.
 
-Ответственный поток: @IKSXXX.
+- [План реализации](../../docs/IMPLEMENTATION_PLAN.md)
+- [Архитектура](../../docs/ARCHITECTURE.md)
+- [Команда](../../docs/TEAM.md)
