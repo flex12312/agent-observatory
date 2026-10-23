@@ -41,7 +41,9 @@ ASP.NET Core API
 
 ## Статус и стек
 
-Проект находится на этапе проектирования: текущая структура содержит документацию и заготовки каталогов. Перечисленные возможности — цели MVP.
+Подготовлена основа backend: solution на .NET 10, подключение PostgreSQL через EF Core, health checks и OpenAPI. Предметные API, SDK и интерфейс ещё не реализованы. Перечисленные возможности — цели MVP.
+
+[Локальный запуск backend](docs/LOCAL_DEVELOPMENT.md)
 
 Планируемый стек: C# / .NET 10 LTS, ASP.NET Core Web API, PostgreSQL, EF Core / Npgsql, SignalR; .NET SDK на Channels и BackgroundService. Тесты: xUnit, WebApplicationFactory, Testcontainers. Запуск: Docker Compose; CI: GitHub Actions. Небольшой demo UI: React / TypeScript.
 

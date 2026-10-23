@@ -1,6 +1,8 @@
 # Backend
 
-Здесь планируется ASP.NET Core Web API, Collector, EF Core и PostgreSQL.
+Подготовлена локальная основа ASP.NET Core Web API, EF Core и PostgreSQL. Collector и предметные API ещё не реализованы.
+
+[Инструкция запуска](../../docs/LOCAL_DEVELOPMENT.md)
 
 В проекте три участника со смешанным распределением задач. Автора и ревьюера выбираем для каждой задачи без постоянного закрепления направлений.
 
