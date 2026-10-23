@@ -1,76 +1,35 @@
 # Agent Observatory
 
-Agent Observatory — система мониторинга, визуализации и анализа выполнения программных агентных систем.
+Проект для просмотра работы агентов: какие вызовы выполнялись, сколько времени заняли и где возникли ошибки.
 
-Проект нужен разработчикам, которым важно понимать не только итоговый результат работы агента, но и весь процесс выполнения: какие агенты и подагенты участвовали, какие модели и инструменты вызывались, где возникали ошибки и повторные попытки, сколько времени занимали отдельные этапы и как различаются разные запуски.
+## Что есть сейчас
 
-## Основные возможности MVP
+- Основа ASP.NET Core API на .NET 10.
+- Подключение PostgreSQL через EF Core и запуск БД в Docker Compose.
+- Проверки состояния приложения, OpenAPI и ответы об ошибках в формате ProblemDetails.
+- Тесты API и доступности БД, сборка и тесты в GitHub Actions.
+- Предложение формата событий: DTO и JSON-пример для обсуждения командой.
 
-- проекты и запуски (Runs);
-- структурированная телеметрия;
-- HTTP API для приёма событий;
-- .NET SDK для подключения приложений;
-- агенты и подагенты;
-- вызовы моделей и инструментов;
-- ошибки и повторные попытки;
-- длительность операций и статистика использования моделей;
-- realtime-обновления;
-- execution graph;
-- timeline;
-- поиск и фильтрация событий.
+Приём событий, API проектов и запусков, SDK и интерфейс ещё не сделаны.
 
-## Архитектура
+## Запуск
 
-```text
-Agent / Agent Framework
-        |
-        | telemetry
-        v
-Agent Observatory Collector
-        |
-        v
-PostgreSQL
-        |
-        v
-ASP.NET Core API
-        |
-        +--> SignalR --> Web UI
+Нужны .NET SDK 10 и работающий Docker. При первом запуске настройте пароль и строку подключения по [инструкции](docs/LOCAL_DEVELOPMENT.md).
+
+После настройки, из корня репозитория:
+
+```powershell
+docker compose up -d --wait
+dotnet run --project src/backend/AgentObservatory.Api --launch-profile http
 ```
 
-Телеметрия передаётся асинхронно. Недоступность Agent Observatory не должна останавливать наблюдаемое приложение и не должна менять его основную логику.
+Проверки: `http://localhost:5080/health/live` и `/health/ready`. Описание API в Development: `/openapi/v1.json`.
 
-## Статус и стек
+Все тесты: `dotnet test AgentObservatory.sln`. Для теста PostgreSQL нужен Docker.
 
-Подготовлена основа backend: solution на .NET 10, подключение PostgreSQL через EF Core, health checks и OpenAPI. Предметные API, SDK и интерфейс ещё не реализованы. Перечисленные возможности — цели MVP.
+## Задачи и документация
 
-[Локальный запуск backend](docs/LOCAL_DEVELOPMENT.md)
-
-Планируемый стек: C# / .NET 10 LTS, ASP.NET Core Web API, PostgreSQL, EF Core / Npgsql, SignalR; .NET SDK на Channels и BackgroundService. Тесты: xUnit, WebApplicationFactory, Testcontainers. Запуск: Docker Compose; CI: GitHub Actions. Небольшой demo UI: React / TypeScript.
-
-Подробности и причины выбора: [архитектура](docs/ARCHITECTURE.md).
-
-## Команда
-
-**В команде три участника со смешанным распределением задач.** Исполнителя выбираем для каждой задачи по договорённости; постоянного разделения на backend, frontend и SDK нет. Известные GitHub-аккаунты: @IKSXXX и @flex12312; аккаунт третьего участника добавим после уточнения.
-
-- [Команда и правила разделения задач](docs/TEAM.md)
-- [Актуальный план реализации с критериями готовности](docs/IMPLEMENTATION_PLAN.md)
-
-## Управление проектом
-
-- [План проекта и текущие задачи — Issue #4](../../issues/4)
-- [Идеи для следующих версий — Issue #50](../../issues/50)
-- [Техническое задание](docs/SPECIFICATION.md)
+- [План проекта](https://github.com/flex12312/agent-observatory/issues/4)
+- [Формат событий](docs/EVENT_CONTRACT.md)
 - [Архитектура](docs/ARCHITECTURE.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Распределение работ](docs/TEAM.md)
-- [Правила работы](CONTRIBUTING.md)
-- [Конфигурация GitHub Project](docs/GITHUB_PROJECT.md)
-
-## Workflow
-
-```text
-Backlog -> Ready -> In Progress -> Review -> Done
-```
-
-Рабочий прогресс и задачи ведутся через GitHub Issues.
+- [Работа с ветками и PR](CONTRIBUTING.md)
