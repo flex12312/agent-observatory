@@ -1,7 +1,7 @@
 ---
-name: Bug
+name: Ошибка
 about: Ошибка в работе проекта
-title: '[Bug] '
+title: ''
 labels: 'bug'
 assignees: ''
 ---
