@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'src/backend/**'
+      - 'src/contracts/**'
+      - 'samples/telemetry/**'
       - 'tests/**'
       - 'AgentObservatory.sln'
       - 'global.json'
@@ -13,6 +15,8 @@ on:
   pull_request:
     paths:
       - 'src/backend/**'
+      - 'src/contracts/**'
+      - 'samples/telemetry/**'
       - 'tests/**'
       - 'AgentObservatory.sln'
       - 'global.json'
