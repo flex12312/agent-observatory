@@ -2,7 +2,7 @@
 
 ## Что подготовлено
 
-Основа задачи #5: solution, подключение EF Core к PostgreSQL, health checks, OpenAPI и стандартные ответы ProblemDetails. Добавлены автоматические проверки API и сценария отказа PostgreSQL, а также workflow сборки и тестов. Предметных сущностей и миграций пока нет. Задача #5 ещё не завершена.
+Основа задачи #5: solution, подключение EF Core к PostgreSQL, health checks, OpenAPI и стандартные ответы ProblemDetails. Добавлены автоматические проверки API и сценария отказа PostgreSQL, а также workflow сборки и тестов. Добавлен локальный приём и чтение событий; проекты, пользователи и авторизация ещё не реализованы. Задача #5 ещё не завершена.
 
 ## Требования
 
@@ -33,7 +33,18 @@ dotnet user-secrets set "ConnectionStrings:Database" "Host=localhost;Port=55432;
 
 Для другого окружения задайте ConnectionStrings__Database через окружение процесса. Без строки подключения API завершится с понятной ошибкой конфигурации; с недоступной БД API запустится, но не будет готово принимать рабочие запросы.
 
-## 3. Собрать и запустить
+## 3. Создать таблицу событий
+
+Для новой локальной БД примените SQL-миграцию **один раз** из корня репозитория:
+
+```powershell
+Get-Content -Raw -Encoding utf8 src/backend/AgentObservatory.Infrastructure/Persistence/Migrations/001_telemetry_events.sql |
+  docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U agent_observatory -d agent_observatory
+```
+
+Повторный запуск завершится ошибкой, если таблица уже существует. Автоматического учёта и применения миграций пока нет. Для удаления таблицы есть `001_telemetry_events.rollback.sql`: он **удаляет все сохранённые события**, поэтому используйте его только для ненужной локальной БД.
+
+## 4. Собрать и запустить
 
 ```powershell
 dotnet restore AgentObservatory.sln
@@ -41,7 +52,7 @@ dotnet build AgentObservatory.sln --no-restore
 dotnet run --project src/backend/AgentObservatory.Api --launch-profile http
 ```
 
-## 4. Проверить в другом терминале
+## 5. Проверить в другом терминале
 
 ```powershell
 curl.exe -i http://localhost:5080/health/live
@@ -53,9 +64,9 @@ curl.exe -i http://localhost:5080/openapi/v1.json
 |---|---|---|
 | /health/live | Процесс API отвечает; БД не проверяется | 200 Healthy |
 | /health/ready | Есть подключение к PostgreSQL | 200 Healthy или 503 Unhealthy |
-| /openapi/v1.json | OpenAPI-документ в Development | 200; пока без предметных endpoints |
+| /openapi/v1.json | OpenAPI-документ в Development | 200; документация локальных endpoints |
 
-Health checks намеренно возвращают краткий статус без строки подключения и деталей исключений. Readiness проверяет соединение, а не наличие будущих таблиц. Миграции автоматически не применяются, EnsureCreated не вызывается.
+Health checks намеренно возвращают краткий статус без строки подключения и деталей исключений. Readiness проверяет соединение, а не наличие таблицы событий. Миграции автоматически не применяются, EnsureCreated не вызывается.
 
 Проверка отказа и восстановления:
 
@@ -91,4 +102,20 @@ GitHub Actions выполняет сборку и полный набор про
 - Infrastructure — ObservatoryDbContext, EF Core и регистрация доступа к БД; зависит от Application.
 - Api — контроллеры, HTTP и сборка зависимостей; подключает Application и Infrastructure.
 
-Domain и Application пока не содержат предметного кода. Следующий шаг — согласовать формат событий и модель Projects/Runs, затем добавить первую миграцию и тесты реального сценария. Общую миграцию готовит один участник по договорённости команды.
+Domain и Application пока не содержат предметного кода. Локальные endpoints временно обращаются к PostgreSQL напрямую; следующими шагами остаются модель Projects/Runs, права доступа и перенос сценария в соответствующие слои. Общие миграции команда согласует до merge.
+
+## Проверить сохранение и чтение
+
+Только в Development отправьте пример:
+
+```powershell
+$batch = Get-Content -Raw -Encoding utf8 samples/telemetry/run.json | ConvertFrom-Json
+Invoke-RestMethod -Method Post -Uri http://localhost:5080/api/telemetry/events `
+  -ContentType 'application/json' -InFile samples/telemetry/run.json
+$run = $batch.events[0].runId
+Invoke-RestMethod "http://localhost:5080/api/telemetry/projects/$($batch.projectId)/runs/$run/events"
+```
+
+`200` при отправке означает commit в PostgreSQL. Повтор того же пакета безопасен; повтор ID с изменённым содержимым возвращает `409` и откатывает весь пакет. Чтение возвращает до 100 событий по времени источника и ID; `hasMore` сообщает, что есть ещё события, но переход на следующие страницы пока не реализован.
+
+Это **временный локальный сценарий**: нет аутентификации, проверки существования проекта и управления содержимым. События, включая metadata, сохраняются целиком. Не используйте реальные персональные данные и не открывайте Development-сервер в сеть. В других окружениях endpoints возвращают `404`.
