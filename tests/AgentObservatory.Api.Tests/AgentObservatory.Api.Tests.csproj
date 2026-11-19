@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\src\contracts\AgentObservatory.Contracts\AgentObservatory.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="../../src/backend/AgentObservatory.Infrastructure/Persistence/Migrations/001_telemetry_events.sql" Link="Fixtures/001_telemetry_events.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../samples/telemetry/run.json" Link="Fixtures/run.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
