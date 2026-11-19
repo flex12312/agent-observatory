@@ -104,18 +104,30 @@ GitHub Actions выполняет сборку и полный набор про
 
 Domain и Application пока не содержат предметного кода. Локальные endpoints временно обращаются к PostgreSQL напрямую; следующими шагами остаются модель Projects/Runs, права доступа и перенос сценария в соответствующие слои. Общие миграции команда согласует до merge.
 
-## Проверить сохранение и чтение
+## Демо записи и повторной отправки
 
-Только в Development отправьте пример:
+После запуска API и создания таблицы выполните в другом PowerShell из корня репозитория. Новый идентификатор проекта позволяет повторять демо без очистки базы.
 
 ```powershell
+$api = 'http://localhost:5080'
 $batch = Get-Content -Raw -Encoding utf8 samples/telemetry/run.json | ConvertFrom-Json
-Invoke-RestMethod -Method Post -Uri http://localhost:5080/api/telemetry/events `
-  -ContentType 'application/json' -InFile samples/telemetry/run.json
+$batch.projectId = [guid]::NewGuid().ToString()
 $run = $batch.events[0].runId
-Invoke-RestMethod "http://localhost:5080/api/telemetry/projects/$($batch.projectId)/runs/$run/events"
+$json = $batch | ConvertTo-Json -Depth 20
+$eventsUrl = "$api/api/telemetry/projects/$($batch.projectId)/runs/$run/events"
+
+1..2 | ForEach-Object {
+  $post = Invoke-RestMethod -Method Post -Uri "$api/api/telemetry/events" `
+    -ContentType 'application/json; charset=utf-8' -Body $json -ErrorAction Stop
+  $stored = Invoke-RestMethod -Uri $eventsUrl -ErrorAction Stop
+  [pscustomobject]@{ attempt = $_; accepted = $post.accepted; stored = $stored.events.Count }
+}
 ```
 
-`200` при отправке означает commit в PostgreSQL. Повтор того же пакета безопасен; повтор ID с изменённым содержимым возвращает `409` и откатывает весь пакет. Чтение возвращает до 100 событий по времени источника и ID; `hasMore` сообщает, что есть ещё события, но переход на следующие страницы пока не реализован.
+В обеих строках ожидается `accepted = 14` и `stored = 14`. `accepted` показывает размер принятого пакета. Сравните `stored` после первой и второй отправки, чтобы проверить отсутствие дублей.
+
+Ключ `(project_id, event_id)` отличает одно событие от другого. Повтор пакета с теми же данными проходит. Если отправить тот же ID с изменённым содержимым, API вернёт `409` и откатит пакет. Прочитать сами события можно командой `(Invoke-RestMethod -Uri $eventsUrl).events`.
+
+Чтение возвращает до 100 событий по времени источника и ID. `hasMore` сообщает, что есть ещё записи. Переход на следующие страницы пока не реализован.
 
 Это **временный локальный сценарий**: нет аутентификации, проверки существования проекта и управления содержимым. События, включая metadata, сохраняются целиком. Не используйте реальные персональные данные и не открывайте Development-сервер в сеть. В других окружениях endpoints возвращают `404`.
