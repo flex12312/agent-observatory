@@ -7,7 +7,6 @@ namespace AgentObservatory.Api.Controllers;
 [Route("api/telemetry")]
 public sealed class TelemetryValidationController(IWebHostEnvironment environment) : ControllerBase
 {
-    // This endpoint only validates a batch. It does not ingest or store events.
     [HttpPost("validate")]
     [RequestSizeLimit(1_048_576)]
     public IActionResult ValidateBatch([FromBody] TelemetryBatch batch)
@@ -22,4 +21,3 @@ public sealed class TelemetryValidationController(IWebHostEnvironment environmen
         return Ok(new { valid = true, eventCount = batch.Events.Count });
     }
 }
-

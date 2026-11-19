@@ -9,7 +9,6 @@ using NpgsqlTypes;
 
 namespace AgentObservatory.Api.Controllers;
 
-// Temporary local-only endpoints. No project authentication or access control exists yet.
 [ApiController]
 [Route("api/telemetry")]
 public sealed class TelemetryEventsController(ObservatoryDbContext db, IWebHostEnvironment environment) : ControllerBase
@@ -27,7 +26,8 @@ public sealed class TelemetryEventsController(ObservatoryDbContext db, IWebHostE
         await db.Database.OpenConnectionAsync(cancellationToken);
         var connection = (NpgsqlConnection)db.Database.GetDbConnection();
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
-        foreach (var item in batch.Events)
+        // Concurrent batches acquire row locks in the same order.
+        foreach (var item in batch.Events.OrderBy(item => item.EventId))
         {
             await using var command = new NpgsqlCommand("""
                 INSERT INTO telemetry_events (project_id, event_id, run_id, occurred_at, payload)

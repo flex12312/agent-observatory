@@ -31,9 +31,13 @@ public sealed class TelemetryPersistenceTests
         var runId = (string)batch["events"]![0]!["runId"]!;
         var endpoint = $"/api/telemetry/projects/{projectId}/runs/{runId}/events";
 
+        var reordered = batch.DeepClone();
+        var reversedEvents = reordered["events"]!.AsArray().Reverse().Select(item => item!.DeepClone());
+        reordered["events"] = new JsonArray(reversedEvents.ToArray());
+
         var requests = await Task.WhenAll(
             client.PostAsJsonAsync("/api/telemetry/events", batch),
-            client.PostAsJsonAsync("/api/telemetry/events", batch));
+            client.PostAsJsonAsync("/api/telemetry/events", reordered));
         Assert.All(requests, r => Assert.Equal(HttpStatusCode.OK, r.StatusCode));
         foreach (var response in requests) response.Dispose();
         var result = await client.GetFromJsonAsync<JsonNode>(endpoint);
